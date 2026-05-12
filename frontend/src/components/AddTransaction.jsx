@@ -2,17 +2,24 @@ import React, { useState } from "react";
 import { PlusCircle } from "lucide-react";
 import { addTransaction } from "../features/budget/budgetSlice";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { CATEGORIES } from "../constants/categories";
 
 const AddTransaction = () => {
   const [type, setType] = useState("expense");
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const dispatch = useDispatch();
+  const [category, setCategory] = useState(CATEGORIES[0]);
 
   // FIX 1: HandleSubmit must be INSIDE the component to access state and dispatch
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !amount) return;
+    if (!name.trim() || !amount || amount <= 0) {
+      return toast.error(
+        "Please enter a valid description and amount greater than 0.",
+      );
+    }
 
     // FIX: Wrap the data in a single object { }
     // Also adding a date field so the backend doesn't complain
@@ -20,6 +27,7 @@ const AddTransaction = () => {
       name,
       amount: Number(amount), // Ensure it's a number
       type,
+      category,
       date: new Date().toLocaleDateString(),
     };
 
@@ -60,10 +68,29 @@ const AddTransaction = () => {
           <input
             type="text"
             placeholder="Rent, Groceries, Salary..."
-            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            className={`w-full p-2.5 bg-slate-50 border rounded-lg outline-none transition-all ${
+              !name && "border-rose-300" // Visual hint
+            }`}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Category
+          </label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -73,7 +100,9 @@ const AddTransaction = () => {
           <input
             type="number"
             placeholder="0.00"
-            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            className={`w-full p-2.5 bg-slate-50 border rounded-lg outline-none transition-all ${
+              !amount && "border-rose-300"
+            }`}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />

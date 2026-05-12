@@ -5,6 +5,10 @@ const transactionSchema = mongoose.Schema({
   name: { type: String, required: true },
   amount: { type: Number, required: true },
   type: { type: String, enum: ['income', 'expense'], required: true },
+  category: { type: String,
+    required: true,
+    default: 'other'
+   },
   date: { type: String, required: true }
 }, { timestamps: true });
 

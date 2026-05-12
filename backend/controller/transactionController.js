@@ -14,10 +14,10 @@ exports.getTransactions = async (req, res) => {
 // @desc    Add a new transaction
 // @route   POST /api/transactions
 exports.addTransaction = async (req, res) => {
-  const { name, amount, type, date } = req.body;
+  const { name, amount, type, category, date } = req.body;
 
-  if (!name || !amount || !type) {
-    return res.status(400).json({ message: 'Please add all fields' });
+  if (!name || !amount || !type || !category) {
+    return res.status(400).json({ message: 'Please provide all required fields' });
   }
 
   try {
@@ -26,6 +26,7 @@ exports.addTransaction = async (req, res) => {
       name,
       amount,
       type,
+      category,
       date
     });
     res.status(201).json(transaction);
